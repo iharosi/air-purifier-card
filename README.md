@@ -117,5 +117,9 @@ src/
 
 ## License
 
-[GPL-3.0-or-later](LICENSE). You may use, modify and redistribute this card,
-but distributed derivatives have to stay under the same license.
+[GPL-3.0-or-later](LICENSE). In plain words:
+
+- **You can** use, copy, change and share this card, for any purpose, for free.
+- **If you share a changed version**, you have to publish its source under the
+  same license.
+- **No warranty** — it comes as is.
