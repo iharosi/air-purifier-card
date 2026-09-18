@@ -4,7 +4,7 @@
  * https://github.com/iharosi/air-purifier-card
  */
 
-const CARD_VERSION = "1.1.1";
+const CARD_VERSION = "1.2.0";
 
 console.info(
   `%c AIR-PURIFIER-CARD %c v${CARD_VERSION} `,
@@ -27,6 +27,58 @@ const aqLevel = (value) => {
     return { label: "Unknown", color: "var(--disabled-text-color, #9e9e9e)" };
   }
   return AQ_LEVELS.find((level) => value <= level.max);
+};
+
+// The inner artwork of the dial, one per animation option. Everything is
+// driven by the --spin custom property so each variation follows the fan speed.
+const ANIMATIONS = {
+  blades: `
+    <g class="blades">
+      <g transform="translate(50,50)">
+        <path transform="rotate(0)" d="M0 0 Q5 -20 19 -25 Q25 -10 6 -4 Z"></path>
+        <path transform="rotate(72)" d="M0 0 Q5 -20 19 -25 Q25 -10 6 -4 Z"></path>
+        <path transform="rotate(144)" d="M0 0 Q5 -20 19 -25 Q25 -10 6 -4 Z"></path>
+        <path transform="rotate(216)" d="M0 0 Q5 -20 19 -25 Q25 -10 6 -4 Z"></path>
+        <path transform="rotate(288)" d="M0 0 Q5 -20 19 -25 Q25 -10 6 -4 Z"></path>
+      </g>
+    </g>
+    <circle class="hub" cx="50" cy="50" r="5"></circle>`,
+
+  pulse: `
+    <circle class="ripple" cx="50" cy="50" r="34"></circle>
+    <circle class="ripple" cx="50" cy="50" r="34"></circle>
+    <circle class="ripple" cx="50" cy="50" r="34"></circle>
+    <circle class="core" cx="50" cy="50" r="12"></circle>`,
+
+  waves: `
+    <g clip-path="url(#disc)">
+      <g class="wave"><path d="M24 62 Q50 42 76 62"></path></g>
+      <g class="wave"><path d="M24 62 Q50 42 76 62"></path></g>
+      <g class="wave"><path d="M24 62 Q50 42 76 62"></path></g>
+    </g>`,
+
+  orbit: `
+    <g class="orbit">
+      <path class="trail" d="M50 14 A36 36 0 0 1 81 32"></path>
+      <circle class="comet" cx="50" cy="14" r="5"></circle>
+    </g>
+    <circle class="core" cx="50" cy="50" r="9"></circle>`,
+
+  particles: `
+    <g clip-path="url(#disc)">
+      <g class="particle"><circle cx="37" cy="58" r="4"></circle></g>
+      <g class="particle"><circle cx="50" cy="60" r="3.2"></circle></g>
+      <g class="particle"><circle cx="62" cy="57" r="4"></circle></g>
+      <g class="particle"><circle cx="43" cy="61" r="2.8"></circle></g>
+      <g class="particle"><circle cx="57" cy="59" r="3.4"></circle></g>
+    </g>
+    <rect class="vent" x="32" y="66" width="36" height="5" rx="2.5"></rect>`,
+};
+
+const PRESET_ALIGN = {
+  left: "flex-start",
+  center: "center",
+  right: "flex-end",
 };
 
 const fireEvent = (node, type, detail = {}) => {
@@ -81,15 +133,20 @@ class AirPurifierCard extends HTMLElement {
       throw new Error("`fan` must be an entity from the `fan` domain.");
     }
     this._config = {
+      ...config,
       name: config.name,
       fan,
       rpm: config.rpm,
       pm25: config.pm25,
       show_presets: config.show_presets !== false,
       presets: config.presets || [25, 50, 75, 100],
-      ...config,
+      animation: ANIMATIONS[config.animation] ? config.animation : "blades",
+      preset_align: PRESET_ALIGN[config.preset_align] ? config.preset_align : "right",
     };
-    if (this._built) this._render();
+    if (this._built) {
+      this._applyOptions();
+      this._render();
+    }
   }
 
   getCardSize() {
@@ -147,9 +204,9 @@ class AirPurifierCard extends HTMLElement {
           border: 2px solid var(--ap-accent);
           opacity: 0;
         }
-        .visual.on .pulse { animation: pulse 2.6s ease-out infinite; }
-        .visual.on .pulse:nth-child(2) { animation-delay: 0.87s; }
-        .visual.on .pulse:nth-child(3) { animation-delay: 1.74s; }
+        .visual.on[data-anim="blades"] .pulse { animation: pulse 2.6s ease-out infinite; }
+        .visual.on[data-anim="blades"] .pulse:nth-child(2) { animation-delay: 0.87s; }
+        .visual.on[data-anim="blades"] .pulse:nth-child(3) { animation-delay: 1.74s; }
         @keyframes pulse {
           0%   { transform: scale(0.62); opacity: 0.55; }
           100% { transform: scale(1.18); opacity: 0; }
@@ -169,15 +226,69 @@ class AirPurifierCard extends HTMLElement {
           transform-origin: 50px 50px;
           transition: stroke-dashoffset 0.5s ease, stroke 0.4s ease;
         }
-        .blades {
-          transform-origin: 50px 50px;
+        .blades, .core, .comet, .vent {
           fill: var(--ap-accent);
           transition: fill 0.4s ease;
         }
-        .visual.on .blades { animation: spin var(--spin, 2s) linear infinite; }
-        .visual.off .blades { fill: var(--ap-idle-color); }
-        @keyframes spin { to { transform: rotate(360deg); } }
+        .ripple, .wave path, .trail {
+          fill: none;
+          stroke: var(--ap-accent);
+          transition: stroke 0.4s ease;
+        }
         .hub { fill: var(--card-background-color, #fff); }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* blades: the fan itself turns, faster at higher speeds */
+        .blades { transform-origin: 50px 50px; }
+        .visual.on .blades { animation: spin var(--spin, 2s) linear infinite; }
+
+        /* pulse: rings breathing out of the centre */
+        .ripple {
+          stroke-width: 3;
+          transform-origin: 50px 50px;
+          opacity: 0;
+        }
+        .visual.off .ripple:nth-of-type(1) { opacity: 0.35; }
+        .visual.on .ripple { animation: ripple calc(var(--spin, 2s) * 2.4) ease-out infinite; }
+        .visual.on .ripple:nth-of-type(2) { animation-delay: calc(var(--spin, 2s) * 0.8); }
+        .visual.on .ripple:nth-of-type(3) { animation-delay: calc(var(--spin, 2s) * 1.6); }
+        @keyframes ripple {
+          0%   { transform: scale(0.3); opacity: 0.85; }
+          100% { transform: scale(1); opacity: 0; }
+        }
+
+        /* waves: airflow sweeping upwards */
+        .wave path { stroke-width: 4.2; stroke-linecap: round; }
+        .wave { opacity: 0.5; }
+        .visual.on .wave { animation: rise calc(var(--spin, 2s) * 1.7) linear infinite; }
+        .visual.on .wave:nth-of-type(2) { animation-delay: calc(var(--spin, 2s) * 0.57); }
+        .visual.on .wave:nth-of-type(3) { animation-delay: calc(var(--spin, 2s) * 1.13); }
+        @keyframes rise {
+          0%   { transform: translateY(18px); opacity: 0; }
+          20%  { opacity: 0.9; }
+          75%  { opacity: 0.7; }
+          100% { transform: translateY(-24px); opacity: 0; }
+        }
+
+        /* orbit: a comet running around the dial */
+        .orbit { transform-origin: 50px 50px; }
+        .trail { stroke-width: 4; stroke-linecap: round; opacity: 0.3; }
+        .visual.on .orbit { animation: spin var(--spin, 2s) linear infinite; }
+
+        /* particles: dust lifted off the intake */
+        .particle { opacity: 0; }
+        .visual.off .particle { opacity: 0.3; }
+        .visual.on .particle { animation: float calc(var(--spin, 2s) * 2.2) linear infinite; }
+        .visual.on .particle:nth-of-type(2) { animation-delay: calc(var(--spin, 2s) * 0.44); }
+        .visual.on .particle:nth-of-type(3) { animation-delay: calc(var(--spin, 2s) * 0.88); }
+        .visual.on .particle:nth-of-type(4) { animation-delay: calc(var(--spin, 2s) * 1.32); }
+        .visual.on .particle:nth-of-type(5) { animation-delay: calc(var(--spin, 2s) * 1.76); }
+        @keyframes float {
+          0%   { transform: translateY(12px); opacity: 0; }
+          15%  { opacity: 0.95; }
+          70%  { opacity: 0.6; }
+          100% { transform: translateY(-30px); opacity: 0; }
+        }
         /* -------- body -------- */
         .body { flex: 1; min-width: 0; }
         .head {
@@ -324,19 +435,13 @@ class AirPurifierCard extends HTMLElement {
           <div class="visual off" id="visual">
             <div class="pulse"></div><div class="pulse"></div><div class="pulse"></div>
             <svg viewBox="0 0 100 100">
+              <defs>
+                <clipPath id="disc"><circle cx="50" cy="50" r="36"></circle></clipPath>
+              </defs>
               <circle class="ring" cx="50" cy="50" r="44"></circle>
               <circle class="ring-value" id="ringValue" cx="50" cy="50" r="44"
                       stroke-dasharray="276.46" stroke-dashoffset="276.46"></circle>
-              <g class="blades" id="blades">
-                <g transform="translate(50,50)">
-                  <path transform="rotate(0)"   d="M0 0 Q5 -20 19 -25 Q25 -10 6 -4 Z"></path>
-                  <path transform="rotate(72)"  d="M0 0 Q5 -20 19 -25 Q25 -10 6 -4 Z"></path>
-                  <path transform="rotate(144)" d="M0 0 Q5 -20 19 -25 Q25 -10 6 -4 Z"></path>
-                  <path transform="rotate(216)" d="M0 0 Q5 -20 19 -25 Q25 -10 6 -4 Z"></path>
-                  <path transform="rotate(288)" d="M0 0 Q5 -20 19 -25 Q25 -10 6 -4 Z"></path>
-                </g>
-              </g>
-              <circle class="hub" cx="50" cy="50" r="5"></circle>
+              <g id="art"></g>
             </svg>
           </div>
 
@@ -370,7 +475,7 @@ class AirPurifierCard extends HTMLElement {
     this._el = {
       card: this.shadowRoot.querySelector("ha-card"),
       visual: $("visual"),
-      blades: $("blades"),
+      art: $("art"),
       ring: $("ringValue"),
       name: $("name"),
       pct: $("pct"),
@@ -408,6 +513,18 @@ class AirPurifierCard extends HTMLElement {
     });
 
     this._built = true;
+    this._applyOptions();
+  }
+
+  /** Options that only change when the configuration changes. */
+  _applyOptions() {
+    const { animation, preset_align: align } = this._config;
+    const el = this._el;
+    if (el.visual.dataset.anim !== animation) {
+      el.visual.dataset.anim = animation;
+      el.art.innerHTML = ANIMATIONS[animation];
+    }
+    el.presets.style.justifyContent = PRESET_ALIGN[align];
   }
 
   // --------------------------------------------------------------- rendering
@@ -558,7 +675,41 @@ const SCHEMA = [
       { name: "pm25", selector: { entity: { domain: "sensor" } } },
     ],
   },
-  { name: "show_presets", selector: { boolean: {} } },
+  {
+    name: "animation",
+    selector: {
+      select: {
+        mode: "dropdown",
+        options: [
+          { value: "blades", label: "Spinning fan blades" },
+          { value: "pulse", label: "Pulsing rings" },
+          { value: "waves", label: "Rising airflow" },
+          { value: "orbit", label: "Orbiting comet" },
+          { value: "particles", label: "Floating particles" },
+        ],
+      },
+    },
+  },
+  {
+    type: "grid",
+    name: "",
+    schema: [
+      { name: "show_presets", selector: { boolean: {} } },
+      {
+        name: "preset_align",
+        selector: {
+          select: {
+            mode: "dropdown",
+            options: [
+              { value: "left", label: "Left" },
+              { value: "center", label: "Center" },
+              { value: "right", label: "Right" },
+            ],
+          },
+        },
+      },
+    ],
+  },
 ];
 
 class AirPurifierCardEditor extends HTMLElement {
@@ -584,6 +735,8 @@ class AirPurifierCardEditor extends HTMLElement {
           rpm: "Fan speed sensor (RPM)",
           pm25: "Air quality sensor (PM2.5)",
           show_presets: "Show speed presets",
+          animation: "Animation",
+          preset_align: "Preset alignment",
         }[schema.name] || schema.name);
       this._form.addEventListener("value-changed", (ev) => {
         fireEvent(this, "config-changed", { config: ev.detail.value });

@@ -24,10 +24,30 @@
       }
       air-purifier-card { display: block; width: 360px; }
       .hint { font-size: 13px; color: #727272; }
+      .controls { display: flex; gap: 16px; font-size: 13px; color: #727272; }
+      .controls select { font: inherit; margin-left: 6px; }
     </style>
   </head>
   <body>
     <air-purifier-card id="card"></air-purifier-card>
+    <div class="controls">
+      <label>Animation
+        <select id="anim">
+          <option value="blades">Spinning fan blades</option>
+          <option value="pulse">Pulsing rings</option>
+          <option value="waves">Rising airflow</option>
+          <option value="orbit">Orbiting comet</option>
+          <option value="particles">Floating particles</option>
+        </select>
+      </label>
+      <label>Presets
+        <select id="align">
+          <option value="right">Right</option>
+          <option value="center">Center</option>
+          <option value="left">Left</option>
+        </select>
+      </label>
+    </div>
     <p class="hint">Mocked Home Assistant — the toggle, slider and presets all work.</p>
 
     <!-- Stand-ins for the Home Assistant elements the card uses.
@@ -105,13 +125,23 @@
       };
 
       const card = document.getElementById("card");
-      card.setConfig({
-        type: "custom:air-purifier-card",
-        fan: "fan.air_purifier_1_pwm_fan",
-        rpm: "sensor.air_purifier_1_fan_rpm",
-        pm25: "sensor.office_air_quality_sensor_pm_summary",
-      });
-      card.hass = hass;
+      const anim = document.getElementById("anim");
+      const align = document.getElementById("align");
+
+      const apply = () => {
+        card.setConfig({
+          type: "custom:air-purifier-card",
+          fan: "fan.air_purifier_1_pwm_fan",
+          rpm: "sensor.air_purifier_1_fan_rpm",
+          pm25: "sensor.office_air_quality_sensor_pm_summary",
+          animation: anim.value,
+          preset_align: align.value,
+        });
+        card.hass = hass;
+      };
+      anim.addEventListener("change", apply);
+      align.addEventListener("change", apply);
+      apply();
     </script>
   </body>
 </html>
