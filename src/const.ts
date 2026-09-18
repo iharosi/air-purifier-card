@@ -12,7 +12,7 @@
 
 import type { AirQualityLevel, AnimationName, PresetAlign } from "./types";
 
-export const CARD_VERSION = "2.3.0";
+export const CARD_VERSION = "2.3.1";
 
 export const CARD_NAME = "air-purifier-card";
 export const EDITOR_NAME = `${CARD_NAME}-editor`;
