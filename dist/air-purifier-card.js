@@ -303,7 +303,7 @@ function t(t,e,s,i){var r,n=arguments.length,a=n<3?e:null===i?i=Object.getOwnPro
   }
   .head {
     display: flex;
-    align-items: baseline;
+    align-items: center;
     gap: 8px;
   }
   .name {

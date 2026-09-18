@@ -273,7 +273,7 @@ export const cardStyles = css`
   }
   .head {
     display: flex;
-    align-items: baseline;
+    align-items: center;
     gap: 8px;
   }
   .name {
