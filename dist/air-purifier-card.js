@@ -4,7 +4,7 @@
  * https://github.com/iharosi/air-purifier-card
  */
 
-const CARD_VERSION = "1.0.0";
+const CARD_VERSION = "1.1.0";
 
 console.info(
   `%c AIR-PURIFIER-CARD %c v${CARD_VERSION} `,
@@ -108,7 +108,10 @@ class AirPurifierCard extends HTMLElement {
   _build() {
     this.shadowRoot.innerHTML = `
       <style>
-        :host { --ap-accent: var(--state-fan-active-color, var(--primary-color, #03a9f4)); }
+        :host {
+          --ap-accent: var(--state-fan-active-color, var(--primary-color, #03a9f4));
+          --ap-idle-color: var(--disabled-text-color, #9e9e9e);
+        }
         ha-card {
           display: block;
           padding: 12px 14px;
@@ -172,7 +175,7 @@ class AirPurifierCard extends HTMLElement {
           transition: fill 0.4s ease;
         }
         .visual.on .blades { animation: spin var(--spin, 2s) linear infinite; }
-        .visual.off .blades { fill: var(--disabled-text-color, #9e9e9e); }
+        .visual.off .blades { fill: var(--ap-idle-color); }
         @keyframes spin { to { transform: rotate(360deg); } }
         .hub { fill: var(--card-background-color, #fff); }
         /* -------- body -------- */
@@ -419,6 +422,25 @@ class AirPurifierCard extends HTMLElement {
       cfg.name || fan?.attributes?.friendly_name || cfg.fan;
 
     const on = !!fan && fan.state === "on";
+
+    // Air quality drives the accent colour while the purifier runs. The chip's
+    // dot keeps that colour even when it is off, everything else turns grey.
+    const pmValue = num(pm);
+    const level = aqLevel(pmValue);
+    this._accent = pm ? level.color : null;
+    if (pm) {
+      el.pmChip.classList.remove("hidden");
+      el.pmDot.style.background = level.color;
+      const unit = pm.attributes.unit_of_measurement || "µg/m³";
+      el.pmText.textContent =
+        pmValue === null
+          ? `PM2.5 ${pm.state}`
+          : `${level.label} · ${pmValue.toFixed(1)} ${unit}`;
+      el.pmChip.title = pm.attributes.friendly_name || cfg.pm25;
+    } else {
+      el.pmChip.classList.add("hidden");
+    }
+
     const percentage = Math.round(
       fan?.attributes?.percentage ?? (on ? 100 : 0)
     );
@@ -428,24 +450,6 @@ class AirPurifierCard extends HTMLElement {
     if (!this._dragging) {
       el.slider.value = String(percentage);
       this._paint(percentage, on);
-    }
-
-    // air quality drives the accent colour of the whole card
-    const pmValue = num(pm);
-    const level = aqLevel(pmValue);
-    if (pm) {
-      this.style.setProperty("--ap-accent", level.color);
-      el.pmChip.classList.remove("hidden");
-      el.pmDot.style.background = level.color;
-      const unit = pm.attributes.unit_of_measurement || "µg/m³";
-      el.pmText.textContent =
-        pmValue === null
-          ? `PM2.5 ${pm.state}`
-          : `${level.label} · ${pmValue} ${unit}`;
-      el.pmChip.title = pm.attributes.friendly_name || cfg.pm25;
-    } else {
-      this.style.removeProperty("--ap-accent");
-      el.pmChip.classList.add("hidden");
     }
 
     if (rpm) {
@@ -487,9 +491,16 @@ class AirPurifierCard extends HTMLElement {
     });
   }
 
-  /** Paint ring, spin speed and percentage label. */
+  /** Paint accent colour, ring, spin speed and percentage label. */
   _paint(percentage, on) {
     const el = this._el;
+    if (!on) {
+      this.style.setProperty("--ap-accent", "var(--ap-idle-color)");
+    } else if (this._accent) {
+      this.style.setProperty("--ap-accent", this._accent);
+    } else {
+      this.style.removeProperty("--ap-accent");
+    }
     const circumference = 2 * Math.PI * 44;
     el.ring.style.strokeDashoffset = String(
       circumference * (1 - percentage / 100)
