@@ -4,7 +4,7 @@
  * https://github.com/iharosi/air-purifier-card
  */
 
-const CARD_VERSION = "1.1.0";
+const CARD_VERSION = "1.1.1";
 
 console.info(
   `%c AIR-PURIFIER-CARD %c v${CARD_VERSION} `,
@@ -250,9 +250,14 @@ class AirPurifierCard extends HTMLElement {
           display: flex;
           align-items: center;
           gap: 6px;
-          flex-wrap: wrap;
           margin-top: 2px;
         }
+        .presets {
+          display: flex;
+          gap: 6px;
+          margin-top: 6px;
+        }
+        .presets:empty { display: none; }
         .chip {
           display: inline-flex;
           align-items: center;
@@ -266,7 +271,10 @@ class AirPurifierCard extends HTMLElement {
           cursor: pointer;
           white-space: nowrap;
         }
-        .chip ha-icon { --mdc-icon-size: 14px; }
+        .chip ha-icon { --mdc-icon-size: 14px; flex: 0 0 auto; }
+        .chip span { overflow: hidden; text-overflow: ellipsis; }
+        #pmChip { min-width: 0; }
+        #rpmChip { flex: 0 0 auto; }
         .dot {
           width: 8px;
           height: 8px;
@@ -346,13 +354,13 @@ class AirPurifierCard extends HTMLElement {
                 <span class="dot" id="pmDot"></span>
                 <span id="pmText"></span>
               </div>
+              <div class="spacer"></div>
               <div class="chip hidden" id="rpmChip">
                 <ha-icon icon="mdi:fan"></ha-icon>
                 <span id="rpmText"></span>
               </div>
-              <div class="spacer"></div>
-              <div class="presets" id="presets"></div>
             </div>
+            <div class="presets" id="presets"></div>
           </div>
         </div>
       </ha-card>
