@@ -4,8 +4,6 @@ A compact, animated Lovelace card for a fan-based air purifier. The fan blades
 spin faster as the speed goes up, and the whole card is tinted by the current
 PM2.5 reading.
 
-![The card running in Home Assistant](images/demo.gif)
-
 ![Air Purifier Card in light and dark themes](images/screenshot.png)
 
 ![type: custom:air-purifier-card](https://img.shields.io/badge/type-custom%3Aair--purifier--card-03a9f4)
@@ -92,8 +90,29 @@ preset_align: center
 
 ## Development
 
-There is no build step — `dist/air-purifier-card.js` is the shipped file.
-Open `preview.html` in a browser to see the card with a mocked `hass` object.
+The card is written in TypeScript with [Lit](https://lit.dev) and bundled by
+Rollup into a single ES module.
+
+```bash
+npm install
+npm run build      # bundle src/ into dist/air-purifier-card.js
+npm run watch      # rebuild on change
+npm run typecheck  # tsc --noEmit
+```
+
+`dist/air-purifier-card.js` is committed so the card can be installed straight
+from the repository, and CI fails if it does not match the sources.
+
+```
+src/
+  air-purifier-card.ts  the card element
+  editor.ts             the visual editor (ha-form)
+  animations.ts         the dial artwork, one template per animation
+  styles.ts             the stylesheet
+  const.ts              version, air quality levels, defaults
+  types.ts              the slice of the Home Assistant API the card uses
+  utils.ts              small helpers
+```
 
 ## License
 
