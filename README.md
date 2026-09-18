@@ -51,7 +51,7 @@ pm25: sensor.office_air_quality_sensor_pm_summary
 | `animation` | string | `blades` | Dial animation, see below |
 | `show_presets` | boolean | `true` | Show the preset speed pills |
 | `presets` | list | `[25, 50, 75, 100]` | Preset percentages |
-| `preset_align` | string | `right` | Preset row alignment: `left`, `center` or `right` |
+| `preset_align` | string | `left` | Preset row alignment: `left`, `center` or `right` |
 
 ## Animations
 
@@ -74,7 +74,7 @@ fan: fan.air_purifier_1_pwm_fan
 rpm: sensor.air_purifier_1_fan_rpm
 pm25: sensor.office_air_quality_sensor_pm_summary
 animation: waves
-preset_align: center
+preset_align: right
 ```
 
 ## Air quality colours

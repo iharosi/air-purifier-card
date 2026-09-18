@@ -81,7 +81,7 @@ export class AirPurifierCard extends LitElement {
       preset_align:
         config.preset_align && config.preset_align in PRESET_ALIGN
           ? (config.preset_align as PresetAlign)
-          : "right",
+          : "left",
     };
   }
 
