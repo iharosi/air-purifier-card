@@ -4,7 +4,7 @@
  * https://github.com/iharosi/air-purifier-card
  */
 
-const CARD_VERSION = "1.2.0";
+const CARD_VERSION = "1.2.1";
 
 console.info(
   `%c AIR-PURIFIER-CARD %c v${CARD_VERSION} `,
@@ -35,14 +35,15 @@ const ANIMATIONS = {
   blades: `
     <g class="blades">
       <g transform="translate(50,50)">
-        <path transform="rotate(0)" d="M0 0 Q5 -20 19 -25 Q25 -10 6 -4 Z"></path>
-        <path transform="rotate(72)" d="M0 0 Q5 -20 19 -25 Q25 -10 6 -4 Z"></path>
-        <path transform="rotate(144)" d="M0 0 Q5 -20 19 -25 Q25 -10 6 -4 Z"></path>
-        <path transform="rotate(216)" d="M0 0 Q5 -20 19 -25 Q25 -10 6 -4 Z"></path>
-        <path transform="rotate(288)" d="M0 0 Q5 -20 19 -25 Q25 -10 6 -4 Z"></path>
+        <path transform="rotate(0)" d="M0 -7 C2 -20 5 -26 10.9 -26.9 A29 29 0 0 1 22.9 -17.9 C16 -14 9 -9 4.8 -5.7 Z"></path>
+        <path transform="rotate(72)" d="M0 -7 C2 -20 5 -26 10.9 -26.9 A29 29 0 0 1 22.9 -17.9 C16 -14 9 -9 4.8 -5.7 Z"></path>
+        <path transform="rotate(144)" d="M0 -7 C2 -20 5 -26 10.9 -26.9 A29 29 0 0 1 22.9 -17.9 C16 -14 9 -9 4.8 -5.7 Z"></path>
+        <path transform="rotate(216)" d="M0 -7 C2 -20 5 -26 10.9 -26.9 A29 29 0 0 1 22.9 -17.9 C16 -14 9 -9 4.8 -5.7 Z"></path>
+        <path transform="rotate(288)" d="M0 -7 C2 -20 5 -26 10.9 -26.9 A29 29 0 0 1 22.9 -17.9 C16 -14 9 -9 4.8 -5.7 Z"></path>
       </g>
     </g>
-    <circle class="hub" cx="50" cy="50" r="5"></circle>`,
+    <circle class="hub" cx="50" cy="50" r="7"></circle>
+    <circle class="core" cx="50" cy="50" r="3"></circle>`,
 
   pulse: `
     <circle class="ripple" cx="50" cy="50" r="34"></circle>
@@ -226,7 +227,7 @@ class AirPurifierCard extends HTMLElement {
           transform-origin: 50px 50px;
           transition: stroke-dashoffset 0.5s ease, stroke 0.4s ease;
         }
-        .blades, .core, .comet, .vent {
+        .blades, .core, .comet, .vent, .particle {
           fill: var(--ap-accent);
           transition: fill 0.4s ease;
         }
