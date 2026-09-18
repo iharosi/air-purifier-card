@@ -1,6 +1,6 @@
 {
   "name": "air-purifier-card",
-  "version": "2.2.0",
+  "version": "2.3.0",
   "description": "Compact animated Lovelace card to control an air purifier in Home Assistant",
   "type": "module",
   "private": true,
