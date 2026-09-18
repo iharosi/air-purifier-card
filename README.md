@@ -117,7 +117,7 @@ src/
 
 ## License
 
-[GPL-3.0-or-later](LICENSE). In plain words:
+[GPL-3.0-only](LICENSE). In plain words:
 
 - **You can** use, copy, change and share this card, for any purpose, for free.
 - **If you share a changed version**, you have to publish its source under the

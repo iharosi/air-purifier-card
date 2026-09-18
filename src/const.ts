@@ -1,3 +1,15 @@
+/*
+ * Air Purifier Card - a Lovelace card for Home Assistant
+ * Copyright (C) 2026 Air Purifier Card contributors
+ *
+ * This program is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License version 3 as published by
+ * the Free Software Foundation. It is distributed WITHOUT ANY WARRANTY; see
+ * the GNU General Public License in LICENSE for details.
+ *
+ * SPDX-License-Identifier: GPL-3.0-only
+ */
+
 import type { AirQualityLevel, AnimationName, PresetAlign } from "./types";
 
 export const CARD_VERSION = "2.2.0";

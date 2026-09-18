@@ -42,6 +42,8 @@ dist/air-purifier-card.js the committed bundle, what HACS installs
 - **Every animation is driven by `--spin`**, set on `.visual` from the fan
   percentage, and must be still and grey when the purifier is off. Only the air
   quality dot keeps its colour in the off state.
+- **Every file in `src/` starts with the GPL-3.0-only header** (copy it from
+  any existing file). The project is GPL-3.0-only, not -or-later.
 - **Unknown `animation` or `preset_align` values fall back** to `blades` and
   `left` instead of throwing.
 

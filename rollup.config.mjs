@@ -11,7 +11,7 @@ export default {
   output: {
     file: "dist/air-purifier-card.js",
     format: "es",
-    banner: `/*! air-purifier-card v${version} | GPL-3.0-or-later | https://github.com/iharosi/air-purifier-card */`,
+    banner: `/*! air-purifier-card v${version} | GPL-3.0-only | https://github.com/iharosi/air-purifier-card */`,
   },
   plugins: [
     resolve(),
