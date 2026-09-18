@@ -4,7 +4,7 @@
   "description": "Compact animated Lovelace card to control an air purifier in Home Assistant",
   "type": "module",
   "private": true,
-  "license": "MIT",
+  "license": "GPL-3.0-or-later",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/iharosi/air-purifier-card.git"

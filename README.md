@@ -117,4 +117,5 @@ src/
 
 ## License
 
-MIT
+[GPL-3.0-or-later](LICENSE). You may use, modify and redistribute this card,
+but distributed derivatives have to stay under the same license.
