@@ -4,6 +4,8 @@ A compact, animated Lovelace card for a fan-based air purifier. The fan blades
 spin faster as the speed goes up, and the whole card is tinted by the current
 PM2.5 reading.
 
+![The card running in Home Assistant](images/demo.gif)
+
 ![Air Purifier Card in light and dark themes](images/screenshot.png)
 
 ![type: custom:air-purifier-card](https://img.shields.io/badge/type-custom%3Aair--purifier--card-03a9f4)
