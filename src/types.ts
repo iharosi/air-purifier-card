@@ -32,7 +32,8 @@ export type AnimationName =
   | "pulse"
   | "waves"
   | "orbit"
-  | "particles";
+  | "particles"
+  | "vortex";
 
 export type PresetAlign = "left" | "center" | "right";
 

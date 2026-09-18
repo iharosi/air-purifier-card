@@ -1,6 +1,6 @@
 import type { AirQualityLevel, AnimationName, PresetAlign } from "./types";
 
-export const CARD_VERSION = "2.1.0";
+export const CARD_VERSION = "2.2.0";
 
 export const CARD_NAME = "air-purifier-card";
 export const EDITOR_NAME = `${CARD_NAME}-editor`;
@@ -29,6 +29,7 @@ export const ANIMATION_NAMES: AnimationName[] = [
   "waves",
   "orbit",
   "particles",
+  "vortex",
 ];
 
 export const ANIMATION_LABELS: Record<AnimationName, string> = {
@@ -37,6 +38,7 @@ export const ANIMATION_LABELS: Record<AnimationName, string> = {
   waves: "Rising airflow",
   orbit: "Orbiting comet",
   particles: "Floating particles",
+  vortex: "Swirling vortex",
 };
 
 export const PRESET_ALIGN: Record<PresetAlign, string> = {

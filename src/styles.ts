@@ -229,6 +229,31 @@ export const cardStyles = css`
     }
   }
 
+  /* vortex: arcs swirling into each other */
+  .swirl {
+    fill: none;
+    stroke: var(--ap-accent);
+    stroke-linecap: round;
+    stroke-width: 3.5;
+    transform-origin: 50px 50px;
+    transition: stroke 0.4s ease;
+  }
+  .swirl:nth-of-type(2) {
+    stroke-width: 3;
+  }
+  .swirl:nth-of-type(3) {
+    stroke-width: 2.5;
+  }
+  .visual.on .swirl {
+    animation: spin var(--spin, 2s) linear infinite;
+  }
+  .visual.on .swirl:nth-of-type(2) {
+    animation: spin calc(var(--spin, 2s) * 1.6) linear infinite reverse;
+  }
+  .visual.on .swirl:nth-of-type(3) {
+    animation: spin calc(var(--spin, 2s) * 2.2) linear infinite;
+  }
+
   /* -------- body -------- */
   .body {
     flex: 1;

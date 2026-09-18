@@ -67,6 +67,7 @@ percentage: the higher the speed, the faster it moves.
 | `waves` | Airflow arcs sweep upwards through the dial |
 | `orbit` | A comet runs around the dial |
 | `particles` | Dust rises off the intake |
+| `vortex` | Arcs swirl into each other, inner rings turning the other way |
 
 ```yaml
 type: custom:air-purifier-card

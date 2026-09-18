@@ -57,4 +57,11 @@ export const ANIMATIONS: Record<AnimationName, SVGTemplateResult> = {
     </g>
     <rect class="vent" x="32" y="66" width="36" height="5" rx="2.5"></rect>
   `,
+
+  vortex: svg`
+    <circle class="swirl" cx="50" cy="50" r="30" stroke-dasharray="62 127"></circle>
+    <circle class="swirl" cx="50" cy="50" r="22" stroke-dasharray="46 92"></circle>
+    <circle class="swirl" cx="50" cy="50" r="14" stroke-dasharray="30 58"></circle>
+    <circle class="core" cx="50" cy="50" r="5"></circle>
+  `,
 };
